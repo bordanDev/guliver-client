@@ -28,6 +28,12 @@
     "@angular/forms": "^20.3.19",
     "@angular/platform-browser": "^20.3.19",
     "@angular/router": "^20.3.19",
+    "@primeng/themes": "^20.4.0",
+    "@primeuix/styled": "^0.7.4",
+    "chart.js": "^4.5.1",
+    "primeflex": "^4.0.0",
+    "primeicons": "^7.0.0",
+    "primeng": "^20.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
