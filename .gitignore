@@ -41,3 +41,11 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Agent Instructions
+/GENERAL.md
+/GRAPH.md
+/COMPONENTS.md
+/CODE_FOUNDATION.md
+/HISTORY.md
+/DTO_RULES.md

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+/* Корректиривки для p-menu: убираем лишние бордеры внутри сайдбара */
+:host ::ng-deep .p-menu {
+    border: none;
+    background: transparent;
+}
