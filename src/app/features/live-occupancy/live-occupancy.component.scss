@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Background utilities if not fully covered by PrimeFlex */
+.surface-green-100 { background-color: #dcfce7; }
+.surface-yellow-100 { background-color: #fef3c7; }
+.surface-red-100 { background-color: #fee2e2; }
+
+/* Customizing p-card inner spacing */
+:host ::ng-deep .p-card .p-card-body {
+    padding: 2rem;
+}

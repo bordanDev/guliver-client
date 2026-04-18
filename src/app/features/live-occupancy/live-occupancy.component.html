@@ -1,0 +1,30 @@
+<p-card header="Live Occupancy" subheader="Real-time facility monitoring" styleClass="w-full shadow-3 border-round-xl">
+  @if (occupancyData$ | async; as data) {
+    <div class="flex flex-column align-items-center gap-4">
+      <div class="flex justify-content-between w-full align-items-center">
+        <span class="text-secondary font-medium">Compliance Limit</span>
+        <p-badge [value]="data.maxCapacity.toString()" severity="info"></p-badge>
+      </div>
+
+      <!-- MeterGroup for Visualization -->
+      <div class="w-full relative mt-3 mb-3">
+          <p-meterGroup [value]="(meterItems$ | async)!" labelPosition="start">
+            <ng-template pTemplate="label">
+              <div class="flex flex-column align-items-center mb-4">
+                 <span class="text-7xl font-bold mb-2 transition-colors transition-duration-300 {{ getStatusTextColor(data.status) }}">
+                    {{ data.currentOccupancy }}
+                 </span>
+                 <span class="text-500 font-semibold uppercase tracking-wide">Current Count</span>
+              </div>
+            </ng-template>
+          </p-meterGroup>
+      </div>
+
+      <!-- Status Indicator -->
+      <div [class]="getStatusContainerClass(data.status)">
+        <i [class]="getStatusIcon(data.status)"></i>
+        <span class="font-bold">{{ data.status }}</span>
+      </div>
+    </div>
+  }
+</p-card>

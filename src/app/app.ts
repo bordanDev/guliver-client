@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LiveOccupancyComponent } from './features/live-occupancy';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, LiveOccupancyComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
