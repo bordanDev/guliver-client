@@ -1,7 +1,8 @@
 <div class="p-4 h-full flex flex-column">
-  <p-toolbar styleClass="mb-4 bg-white border-none shadow-1 border-round-xl">
+  <p-toolbar styleClass="mb-4 bg-white border-none shadow-1 border-round">
+    <h2 class="m-0 text-900 mr-3">Events Matrix</h2>
+
     <div class="p-toolbar-group-start flex align-items-center gap-3">
-      <h2 class="m-0 text-900 mr-3">Events Matrix</h2>
       <p-select
         [options]="facade.events()"
         [ngModel]="facade.selectedEvent()"
@@ -38,7 +39,7 @@
         pDroppable="devices"
         (onDrop)="onDropToAvailable()"
       >
-        <div class="h-full surface-ground p-3 border-round-xl">
+        <div class="h-full surface-ground border-round">
           <app-available-devices-list
             [devices]="facade.availableDevices()"
             (dragStart)="onDragStart($event)"
@@ -50,7 +51,7 @@
 
       <!-- Справа: Доска локаций (Белый фон) -->
       <div class="col-12 md:col-8 lg:col-9 p-0">
-        <div class="h-full bg-white p-3 border-round-xl shadow-1">
+        <div class="h-full bg-white p-3 border-round shadow-1">
           <app-locations-board
             [locations]="facade.locations()"
             [availableDevices]="facade.availableDevices()"
@@ -61,6 +62,9 @@
             (unassign)="onUnassign($event)"
             (createLocation)="onCreateLocation($event)"
             (renameLocation)="onRenameLocation($event)"
+            (clearAllDevices)="facade.clearAllDevicesFromLocations()"
+            (deleteAllLocations)="facade.deleteAllLocations()"
+            (deleteLocation)="facade.deleteLocation($event)"
           >
           </app-locations-board>
         </div>

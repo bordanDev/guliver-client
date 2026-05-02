@@ -24,7 +24,7 @@
       styleClass="border-none border-bottom-1 surface-border border-noround px-4 h-4rem surface-card shadow-1"
     >
       <ng-template pTemplate="start">
-        <span class="text-600 font-medium">Control Center</span>
+        <p-breadcrumb [model]="breadcrumbItems()" [home]="home" styleClass="border-none bg-transparent p-0"></p-breadcrumb>
       </ng-template>
       <ng-template pTemplate="end">
         <div class="flex align-items-center gap-4">

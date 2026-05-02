@@ -166,4 +166,84 @@ export class EventsConfigFacade {
        return { ...state, events: newEvents };
     });
   }
+
+  public clearAllDevicesFromLocations(): void {
+    const eventId = this.selectedEventId();
+    if (!eventId) return;
+
+    this._state.update((state) => {
+      let unassignedDevices: ConfigDeviceDto[] = [];
+      
+      const newEvents = state.events.map(evt => {
+        if (evt.eventId !== eventId) return evt;
+        
+        const updatedLocations = evt.locations.map(loc => {
+           unassignedDevices.push(...loc.devices.map(d => ({...d, status: 'UNASSIGNED' as const})));
+           return { ...loc, devices: [] };
+        });
+        
+        return { ...evt, locations: updatedLocations };
+      });
+      
+      return {
+        ...state,
+        globalAvailableDevices: [...state.globalAvailableDevices, ...unassignedDevices],
+        events: newEvents
+      };
+    });
+  }
+
+  public deleteAllLocations(): void {
+    const eventId = this.selectedEventId();
+    if (!eventId) return;
+
+    this._state.update((state) => {
+      let unassignedDevices: ConfigDeviceDto[] = [];
+      
+      const newEvents = state.events.map(evt => {
+        if (evt.eventId !== eventId) return evt;
+        
+        evt.locations.forEach(loc => {
+           unassignedDevices.push(...loc.devices.map(d => ({...d, status: 'UNASSIGNED' as const})));
+        });
+        
+        return { ...evt, locations: [] };
+      });
+      
+      return {
+        ...state,
+        globalAvailableDevices: [...state.globalAvailableDevices, ...unassignedDevices],
+        events: newEvents
+      };
+    });
+  }
+
+  public deleteLocation(locationId: string): void {
+    const eventId = this.selectedEventId();
+    if (!eventId) return;
+
+    this._state.update((state) => {
+      let unassignedDevices: ConfigDeviceDto[] = [];
+      
+      const newEvents = state.events.map(evt => {
+        if (evt.eventId !== eventId) return evt;
+        
+        const targetLocation = evt.locations.find(l => l.id === locationId);
+        if (targetLocation) {
+             unassignedDevices.push(...targetLocation.devices.map(d => ({...d, status: 'UNASSIGNED' as const})));
+        }
+        
+        return { 
+           ...evt, 
+           locations: evt.locations.filter(l => l.id !== locationId) 
+        };
+      });
+      
+      return {
+        ...state,
+        globalAvailableDevices: [...state.globalAvailableDevices, ...unassignedDevices],
+        events: newEvents
+      };
+    });
+  }
 }

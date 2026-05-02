@@ -26,6 +26,9 @@ export class LocationsBoardComponent {
   
   public createLocation = output<string>();
   public renameLocation = output<{ locationId: string, name: string }>();
+  public deleteLocation = output<string>();
+  public clearAllDevices = output<void>();
+  public deleteAllLocations = output<void>();
 
   // Модальное окно (сигналы) назначения девайсов
   public displayDialog = signal(false);
