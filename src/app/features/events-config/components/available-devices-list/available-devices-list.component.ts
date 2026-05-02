@@ -12,6 +12,7 @@ import { ConfigDeviceDto } from '@guliver/shared-contracts';
 })
 export class AvailableDevicesListComponent {
   public devices = input.required<ConfigDeviceDto[]>();
+  public disabled = input<boolean>(false);
   public dragStart = output<ConfigDeviceDto>();
   public dragEnd = output<void>();
 

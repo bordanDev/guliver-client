@@ -42,6 +42,7 @@
         <div class="h-full surface-ground border-round">
           <app-available-devices-list
             [devices]="facade.availableDevices()"
+            [disabled]="facade.locations().length === 0"
             (dragStart)="onDragStart($event)"
             (dragEnd)="onDragEnd()"
           >
