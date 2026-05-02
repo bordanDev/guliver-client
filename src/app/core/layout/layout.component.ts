@@ -4,12 +4,13 @@ import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { ToolbarModule } from 'primeng/toolbar';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { ButtonModule } from 'primeng/button';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, MenuModule, ToolbarModule, BreadcrumbModule],
+  imports: [RouterOutlet, MenuModule, ToolbarModule, BreadcrumbModule, ButtonModule],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,6 +19,7 @@ export class LayoutComponent implements OnInit {
   public menuItems: MenuItem[] = [];
   public breadcrumbItems = signal<MenuItem[]>([]);
   public home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
+  public isDarkMode = signal<boolean>(false);
 
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
@@ -95,5 +97,11 @@ export class LayoutComponent implements OnInit {
   private capitalize(s: string): string {
     if (!s) return '';
     return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  public toggleTheme(): void {
+    const element = document.documentElement;
+    element.classList.toggle('app-dark');
+    this.isDarkMode.update(v => !v);
   }
 }

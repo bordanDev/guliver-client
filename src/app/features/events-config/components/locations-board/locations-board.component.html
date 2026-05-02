@@ -1,9 +1,27 @@
-<div class="flex justify-content-between align-items-center mb-4 pb-3 border-bottom-1 surface-border">
-    <h3 class="m-0 text-700">Event Locations</h3>
-    <div class="flex gap-2">
-        <p-button label="Clear Devices" icon="pi pi-eraser" severity="secondary" [outlined]="true" size="small" (onClick)="clearAllDevices.emit()" [disabled]="locations().length === 0"></p-button>
-        <p-button label="Delete All" icon="pi pi-trash" severity="danger" [outlined]="true" size="small" (onClick)="deleteAllLocations.emit()" [disabled]="locations().length === 0"></p-button>
-    </div>
+<div
+  class="flex justify-content-between align-items-center mb-4 pb-3 border-bottom-1 surface-border"
+>
+  <h3 class="m-0 text-700">Event Locations</h3>
+  <div class="flex gap-2">
+    <p-button
+      label="Clear Devices"
+      icon="pi pi-eraser"
+      severity="secondary"
+      [outlined]="true"
+      size="small"
+      (onClick)="clearAllDevices.emit()"
+      [disabled]="locations().length === 0"
+    ></p-button>
+    <p-button
+      label="Delete All"
+      icon="pi pi-trash"
+      severity="danger"
+      [outlined]="true"
+      size="small"
+      (onClick)="deleteAllLocations.emit()"
+      [disabled]="locations().length === 0"
+    ></p-button>
+  </div>
 </div>
 
 <div class="grid">
@@ -15,37 +33,68 @@
         (onDrop)="onDrop(location.id)"
         (onDragEnter)="onDragEnter(location.id)"
         (onDragLeave)="onDragLeave()"
-        [class.surface-hover]="dragHoverLocation() === location.id"
+        [class.surface-100]="dragHoverLocation() === location.id"
         [class.border-primary]="dragHoverLocation() === location.id"
-        class="surface-card border-round shadow-1 p-3 border-2 surface-border h-full flex flex-column transition-colors transition-duration-200"
+        class="surface-0 border-round shadow-1 p-3 border-2 surface-border h-full flex flex-column transition-colors transition-duration-200"
       >
         <div class="flex justify-content-between align-items-center mb-3">
           @if (editingLocationId() === location.id) {
-              <div class="flex align-items-center gap-2 w-full pr-2">
-                  <input pInputText [ngModel]="editingLocationName()" (ngModelChange)="editingLocationName.set($event)" class="w-full" (keydown.enter)="saveLocationName(location.id)" autofocus />
-                  <p-button icon="pi pi-check" [text]="true" severity="success" (onClick)="saveLocationName(location.id)"></p-button>
-                  <p-button icon="pi pi-times" [text]="true" severity="danger" (onClick)="cancelEditingLocation()"></p-button>
-              </div>
+            <div class="flex align-items-center gap-2 w-full pr-2">
+              <input
+                pInputText
+                [ngModel]="editingLocationName()"
+                (ngModelChange)="editingLocationName.set($event)"
+                class="w-full"
+                (keydown.enter)="saveLocationName(location.id)"
+                autofocus
+              />
+              <p-button
+                icon="pi pi-check"
+                [text]="true"
+                severity="success"
+                (onClick)="saveLocationName(location.id)"
+              ></p-button>
+              <p-button
+                icon="pi pi-times"
+                [text]="true"
+                severity="danger"
+                (onClick)="cancelEditingLocation()"
+              ></p-button>
+            </div>
           } @else {
-              <div class="flex align-items-center gap-1">
-                  <span class="text-xl font-bold mr-2">{{ location.name }}</span>
-                  <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" size="small" severity="secondary" (onClick)="startEditingLocation(location)"></p-button>
-                  <p-button icon="pi pi-trash" [text]="true" [rounded]="true" size="small" severity="danger" (onClick)="deleteLocation.emit(location.id)"></p-button>
-              </div>
-              <span class="text-sm font-medium text-white bg-primary border-round px-2 py-1">{{
-                location.devices.length
-              }}</span>
+            <div class="flex align-items-center gap-1">
+              <span class="text-xl font-bold mr-2">{{ location.name }}</span>
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                severity="secondary"
+                (onClick)="startEditingLocation(location)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                severity="danger"
+                (onClick)="deleteLocation.emit(location.id)"
+              ></p-button>
+            </div>
+            <span class="text-sm font-medium text-white bg-primary border-round px-2 py-1">{{
+              location.devices.length
+            }}</span>
           }
         </div>
 
         <!-- Контейнер девайсов -->
-        <div class="flex-1 surface-ground border-round p-2 min-h-10rem flex flex-column gap-2 mb-3">
+        <div class="flex-1 surface-50 border-round p-2 min-h-10rem flex flex-column gap-2 mb-3">
           @if (location.devices.length === 0) {
             <div
               class="flex-1 flex align-items-center justify-content-center text-400 border-dashed border-round border-400 transition-colors transition-duration-200"
-              [class.bg-blue-50]="dragHoverLocation() === location.id"
-              [class.text-blue-500]="dragHoverLocation() === location.id"
-              [class.border-blue-400]="dragHoverLocation() === location.id"
+              [class.surface-100]="dragHoverLocation() === location.id"
+              [class.text-primary]="dragHoverLocation() === location.id"
+              [class.border-primary]="dragHoverLocation() === location.id"
             >
               @if (dragHoverLocation() === location.id) {
                 <i class="pi pi-download mr-2 text-xl"></i>
@@ -59,7 +108,7 @@
                 pDraggable="devices"
                 (onDragStart)="onDragStart(device)"
                 (onDragEnd)="onDragEnd()"
-                class="p-2 border-round surface-card shadow-1 cursor-move border-1 surface-border flex justify-content-between align-items-center bg-white hover:surface-hover transition-colors"
+                class="p-2 border-round surface-0 shadow-1 cursor-move border-1 surface-border flex justify-content-between align-items-center hover:surface-100 transition-colors"
               >
                 <div class="flex flex-column">
                   <span class="font-bold text-700 text-sm">{{ device.deviceName }}</span>
@@ -93,12 +142,14 @@
 
   <!-- Add New Location Card -->
   <div class="col-12 xl:col-6">
-      <div class="surface-card border-round p-3 border-2 border-dashed surface-border h-full flex flex-column align-items-center justify-content-center cursor-pointer hover:surface-hover transition-colors text-600 hover:text-primary"
-           style="min-height: 200px"
-           (click)="displayCreateLocationDialog.set(true)">
-           <i class="pi pi-plus text-4xl mb-3"></i>
-           <span class="text-xl font-medium">Add New Location</span>
-      </div>
+    <div
+      class="surface-0 border-round p-3 border-2 border-dashed surface-border h-full flex flex-column align-items-center justify-content-center cursor-pointer hover:surface-100 transition-colors text-600 hover:text-primary"
+      style="min-height: 200px"
+      (click)="displayCreateLocationDialog.set(true)"
+    >
+      <i class="pi pi-plus text-4xl mb-3"></i>
+      <span class="text-xl font-medium">Add New Location</span>
+    </div>
   </div>
 </div>
 
@@ -152,13 +203,37 @@
 </p-dialog>
 
 <!-- Modal Dialog for Creating Location -->
-<p-dialog header="Create New Location" [visible]="displayCreateLocationDialog()" (visibleChange)="displayCreateLocationDialog.set($event)" [modal]="true" [style]="{width: '25vw', minWidth: '300px'}">
-    <div class="flex flex-column gap-2 pt-2">
-        <label for="locationName" class="font-bold">Location Name</label>
-        <input pInputText id="locationName" [ngModel]="newLocationName()" (ngModelChange)="newLocationName.set($event)" autofocus (keydown.enter)="confirmCreateLocation()" />
-    </div>
-    <ng-template pTemplate="footer">
-        <p-button label="Cancel" icon="pi pi-times" [text]="true" severity="secondary" (onClick)="displayCreateLocationDialog.set(false)"></p-button>
-        <p-button label="Create" icon="pi pi-check" (onClick)="confirmCreateLocation()" [disabled]="!newLocationName()"></p-button>
-    </ng-template>
+<p-dialog
+  header="Create New Location"
+  [visible]="displayCreateLocationDialog()"
+  (visibleChange)="displayCreateLocationDialog.set($event)"
+  [modal]="true"
+  [style]="{ width: '25vw', minWidth: '300px' }"
+>
+  <div class="flex flex-column gap-2 pt-2">
+    <label for="locationName" class="font-bold">Location Name</label>
+    <input
+      pInputText
+      id="locationName"
+      [ngModel]="newLocationName()"
+      (ngModelChange)="newLocationName.set($event)"
+      autofocus
+      (keydown.enter)="confirmCreateLocation()"
+    />
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      [text]="true"
+      severity="secondary"
+      (onClick)="displayCreateLocationDialog.set(false)"
+    ></p-button>
+    <p-button
+      label="Create"
+      icon="pi pi-check"
+      (onClick)="confirmCreateLocation()"
+      [disabled]="!newLocationName()"
+    ></p-button>
+  </ng-template>
 </p-dialog>

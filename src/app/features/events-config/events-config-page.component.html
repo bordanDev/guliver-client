@@ -1,5 +1,5 @@
 <div class="p-4 h-full flex flex-column">
-  <p-toolbar styleClass="mb-4 bg-white border-none shadow-1 border-round">
+  <p-toolbar styleClass="mb-4 surface-0 border-none shadow-1 border-round">
     <h2 class="m-0 text-900 mr-3">Events Matrix</h2>
 
     <div class="p-toolbar-group-start flex align-items-center gap-3">
@@ -22,7 +22,7 @@
 
   @if (!facade.selectedEventId()) {
     <div
-      class="flex-1 flex align-items-center justify-content-center text-500 surface-card border-round shadow-1"
+      class="flex-1 flex align-items-center justify-content-center text-500 surface-0 border-round shadow-1"
     >
       <div class="text-center">
         <i class="pi pi-sitemap text-6xl mb-3 text-400"></i>
@@ -39,7 +39,7 @@
         pDroppable="devices"
         (onDrop)="onDropToAvailable()"
       >
-        <div class="h-full surface-ground border-round">
+        <div class="h-full surface-50 border-round">
           <app-available-devices-list
             [devices]="facade.availableDevices()"
             [disabled]="facade.locations().length === 0"
@@ -52,7 +52,7 @@
 
       <!-- Справа: Доска локаций (Белый фон) -->
       <div class="col-12 md:col-8 lg:col-9 p-0">
-        <div class="h-full bg-white p-3 border-round shadow-1">
+        <div class="h-full surface-0 p-3 border-round shadow-1">
           <app-locations-board
             [locations]="facade.locations()"
             [availableDevices]="facade.availableDevices()"

@@ -28,6 +28,7 @@
       </ng-template>
       <ng-template pTemplate="end">
         <div class="flex align-items-center gap-4">
+          <p-button [icon]="isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'" (onClick)="toggleTheme()" [rounded]="true" [text]="true" severity="secondary"></p-button>
           <i
             class="pi pi-bell text-secondary text-xl cursor-pointer hover:text-primary transition-colors"
           ></i>

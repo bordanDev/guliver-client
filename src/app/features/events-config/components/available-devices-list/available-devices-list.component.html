@@ -1,33 +1,34 @@
-<div class="surface-card border-round shadow-1 p-3 h-full border-1 surface-border">
-    <div class="text-xl font-medium mb-3 pb-2 border-bottom-1 surface-border">
-        Available Devices ({{ devices().length }})
-    </div>
+<div class="surface-0 border-round shadow-1 p-3 h-full border-1 surface-border">
+  <div class="text-xl font-medium mb-3 pb-2 border-bottom-1 surface-border">
+    Available Devices ({{ devices().length }})
+  </div>
 
-    @if (devices().length === 0) {
-        <div class="p-4 text-center text-500 border-round surface-ground border-dashed border-400">
-            <i class="pi pi-check-circle text-3xl mb-2 text-green-500"></i>
-            <div>All devices are provisioned!</div>
+  @if (devices().length === 0) {
+    <div class="p-4 text-center text-500 border-round surface-50 border-dashed border-400">
+      <i class="pi pi-check-circle text-3xl mb-2 text-green-500"></i>
+      <div>All devices are provisioned!</div>
+    </div>
+  } @else {
+    <div class="flex flex-column gap-2 overflow-y-auto" style="max-height: calc(100vh - 12rem)">
+      @for (device of devices(); track device.id) {
+        <div
+          pDraggable="devices"
+          [pDraggableDisabled]="disabled()"
+          (onDragStart)="onDragStart(device)"
+          (onDragEnd)="onDragEnd()"
+          [class.opacity-50]="disabled()"
+          [class.cursor-not-allowed]="disabled()"
+          [class.cursor-move]="!disabled()"
+          [class.hover:surface-100]="!disabled()"
+          class="p-3 border-round shadow-1 transition-colors border-1 surface-border surface-0 flex flex-column gap-2"
+        >
+          <div class="flex justify-content-between align-items-center">
+            <span class="font-bold text-700">{{ device.deviceName }}</span>
+            <p-tag severity="info" value="Unassigned"></p-tag>
+          </div>
+          <span class="font-mono text-sm text-500">MAC: {{ device.macAddress }}</span>
         </div>
-    } @else {
-        <div class="flex flex-column gap-2 overflow-y-auto" style="max-height: calc(100vh - 12rem);">
-            @for (device of devices(); track device.id) {
-                <div pDraggable="devices"
-                     [pDraggableDisabled]="disabled()"
-                     (onDragStart)="onDragStart(device)"
-                     (onDragEnd)="onDragEnd()"
-                     [class.opacity-50]="disabled()"
-                     [class.cursor-not-allowed]="disabled()"
-                     [class.cursor-move]="!disabled()"
-                     [class.hover:surface-hover]="!disabled()"
-                     class="p-3 border-round shadow-1 transition-colors border-1 surface-border bg-white flex flex-column gap-2">
-                     
-                     <div class="flex justify-content-between align-items-center">
-                        <span class="font-bold text-700">{{ device.deviceName }}</span>
-                        <p-tag severity="info" value="Unassigned"></p-tag>
-                     </div>
-                     <span class="font-mono text-sm text-500">MAC: {{ device.macAddress }}</span>
-                </div>
-            }
-        </div>
-    }
+      }
+    </div>
+  }
 </div>
