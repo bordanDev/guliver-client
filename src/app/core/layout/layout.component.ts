@@ -40,35 +40,15 @@ export class LayoutComponent implements OnInit {
             icon: 'pi pi-chart-line',
             routerLink: '/analytics/traffic',
           },
-          {
-            label: 'Conversion',
-            icon: 'pi pi-dollar',
-            routerLink: '/analytics/conversion',
-          },
         ],
       },
       {
-        label: 'System & Logs',
+        label: 'Configuration',
         items: [
           {
-            label: 'Passage Logs',
-            icon: 'pi pi-list',
-            routerLink: '/logs/passage',
-          },
-          {
-            label: 'Hardware Status',
-            icon: 'pi pi-server',
-            routerLink: '/logs/hardware',
-          },
-          {
-            label: 'Compliance Settings',
-            icon: 'pi pi-sliders-h',
-            routerLink: '/config/compliance',
-          },
-          {
-            label: 'Node Calibration',
-            icon: 'pi pi-compass',
-            routerLink: '/config/calibration',
+            label: 'Events Matrix',
+            icon: 'pi pi-sitemap',
+            routerLink: '/config/events',
           },
         ],
       },

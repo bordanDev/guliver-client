@@ -13,7 +13,11 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "paths": {
+      "@guliver/shared-contracts": ["../guliver-shared-contracts/index.ts"],
+      "@guliver/shared-contracts/*": ["../guliver-shared-contracts/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

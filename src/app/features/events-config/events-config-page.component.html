@@ -1,0 +1,31 @@
+<div class="p-4 h-full flex flex-column">
+    <div class="mb-4">
+        <h2 class="m-0 text-900">Event Configuration: {{ facade.eventName() }}</h2>
+        <span class="text-500">Drag and drop devices to locations to provision your hardware matrix.</span>
+    </div>
+
+    <!-- Основная сетка. Слева: Available, Справа: Board -->
+    <div class="grid flex-1">
+        <!-- Слева: Свободные устройства. Делаем зону Droppable, чтобы можно было отвязывать устройства -->
+        <div class="col-12 md:col-4 lg:col-3" pDroppable="devices" (onDrop)="onDropToAvailable()">
+            <app-available-devices-list 
+                [devices]="facade.availableDevices()"
+                (dragStart)="onDragStart($event)"
+                (dragEnd)="onDragEnd()">
+            </app-available-devices-list>
+        </div>
+
+        <!-- Справа: Доска локаций -->
+        <div class="col-12 md:col-8 lg:col-9">
+            <app-locations-board 
+                [locations]="facade.locations()"
+                [availableDevices]="facade.availableDevices()"
+                (dragStart)="onDragStart($event)"
+                (dragEnd)="onDragEnd()"
+                (dropped)="onDropToLocation($event)"
+                (assignFromDialog)="onAssignFromDialog($event)"
+                (unassign)="onUnassign($event)">
+            </app-locations-board>
+        </div>
+    </div>
+</div>
