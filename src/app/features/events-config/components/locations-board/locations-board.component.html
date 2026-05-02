@@ -91,7 +91,7 @@
         <div class="flex-1 surface-50 border-round p-2 min-h-10rem flex flex-column gap-2 mb-3">
           @if (location.devices.length === 0) {
             <div
-              class="flex-1 flex align-items-center justify-content-center text-400 border-dashed border-round border-400 transition-colors transition-duration-200"
+              class="flex-1 flex align-items-center justify-content-center text-400 border-dashed border-round border-400 transition-colors transition-duration-200 p-3"
               [class.surface-100]="dragHoverLocation() === location.id"
               [class.text-primary]="dragHoverLocation() === location.id"
               [class.border-primary]="dragHoverLocation() === location.id"

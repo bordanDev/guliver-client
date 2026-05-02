@@ -9,7 +9,11 @@
       <!-- <i class="pi pi-bolt text-primary text-2xl mr-2"></i> -->
       <span class="text-xl font-bold">Dashboard</span>
 
-      <img src="assets/logo.svg" alt="" />
+      @if (isDarkMode()) {
+        <img src="assets/logo-dark.svg" alt="" />
+      } @else {
+        <img src="assets/logo.svg" alt="" />
+      }
     </div>
     <div class="flex-1 overflow-y-auto px-1">
       <!-- Использование p-menu обеспечивает статичный (не схлопывающийся) список с лейблами секций -->
@@ -24,11 +28,21 @@
       styleClass="border-none border-bottom-1 surface-border border-noround px-4 h-4rem surface-card shadow-1"
     >
       <ng-template pTemplate="start">
-        <p-breadcrumb [model]="breadcrumbItems()" [home]="home" styleClass="border-none bg-transparent p-0"></p-breadcrumb>
+        <p-breadcrumb
+          [model]="breadcrumbItems()"
+          [home]="home"
+          styleClass="border-none bg-transparent p-0"
+        ></p-breadcrumb>
       </ng-template>
       <ng-template pTemplate="end">
         <div class="flex align-items-center gap-4">
-          <p-button [icon]="isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'" (onClick)="toggleTheme()" [rounded]="true" [text]="true" severity="secondary"></p-button>
+          <p-button
+            [icon]="isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+            (onClick)="toggleTheme()"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+          ></p-button>
           <i
             class="pi pi-bell text-secondary text-xl cursor-pointer hover:text-primary transition-colors"
           ></i>

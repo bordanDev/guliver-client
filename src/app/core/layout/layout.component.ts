@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
-import { ToolbarModule } from 'primeng/toolbar';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
+import { ToolbarModule } from 'primeng/toolbar';
 import { filter } from 'rxjs/operators';
+import { Theme } from '../services';
 
 @Component({
   selector: 'app-layout',
@@ -23,6 +24,7 @@ export class LayoutComponent implements OnInit {
 
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
+  private theme = inject(Theme);
 
   ngOnInit() {
     this.menuItems = [
@@ -42,16 +44,6 @@ export class LayoutComponent implements OnInit {
         ],
       },
       {
-        label: 'Analytics',
-        items: [
-          {
-            label: 'Traffic Chart',
-            icon: 'pi pi-chart-line',
-            routerLink: '/analytics/traffic',
-          },
-        ],
-      },
-      {
         label: 'Configuration',
         items: [
           {
@@ -61,19 +53,31 @@ export class LayoutComponent implements OnInit {
           },
         ],
       },
+      {
+        label: 'Analytics',
+        items: [
+          {
+            label: 'Traffic Chart',
+            icon: 'pi pi-chart-line',
+            routerLink: '/analytics/traffic',
+          },
+        ],
+      },
     ];
 
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.breadcrumbItems.set(this.createBreadcrumbs(this.activatedRoute.root));
     });
-    
+
     // Установка при первой загрузке
     this.breadcrumbItems.set(this.createBreadcrumbs(this.activatedRoute.root));
   }
 
-  private createBreadcrumbs(route: ActivatedRoute, url: string = '', breadcrumbs: MenuItem[] = []): MenuItem[] {
+  private createBreadcrumbs(
+    route: ActivatedRoute,
+    url: string = '',
+    breadcrumbs: MenuItem[] = [],
+  ): MenuItem[] {
     const children: ActivatedRoute[] = route.children;
 
     if (children.length === 0) {
@@ -102,6 +106,6 @@ export class LayoutComponent implements OnInit {
   public toggleTheme(): void {
     const element = document.documentElement;
     element.classList.toggle('app-dark');
-    this.isDarkMode.update(v => !v);
+    this.isDarkMode.update((v) => !v);
   }
 }
