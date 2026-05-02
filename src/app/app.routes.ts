@@ -19,6 +19,10 @@ export const routes: Routes = [
         redirectTo: 'live',
         pathMatch: 'full',
       },
+      {
+        path: '**',
+        loadComponent: () => import('./shared/components/under-construction/under-construction.component').then((m) => m.UnderConstructionComponent)
+      }
     ],
   },
 ];
