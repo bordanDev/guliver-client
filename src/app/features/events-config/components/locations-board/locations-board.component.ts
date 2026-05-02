@@ -5,11 +5,12 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { DragDropModule } from 'primeng/dragdrop';
 import { ListboxModule } from 'primeng/listbox';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-locations-board',
   standalone: true,
-  imports: [DragDropModule, ButtonModule, DialogModule, ListboxModule, FormsModule],
+  imports: [DragDropModule, ButtonModule, DialogModule, ListboxModule, FormsModule, InputTextModule],
   templateUrl: './locations-board.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,11 +23,22 @@ export class LocationsBoardComponent {
   public dropped = output<string>(); // ID локации
   public assignFromDialog = output<{ devices: ConfigDeviceDto[]; locationId: string }>();
   public unassign = output<string>();
+  
+  public createLocation = output<string>();
+  public renameLocation = output<{ locationId: string, name: string }>();
 
-  // Модальное окно (сигналы)
+  // Модальное окно (сигналы) назначения девайсов
   public displayDialog = signal(false);
   public activeLocationForDialog = signal<string | null>(null);
   public selectedDevicesForDialog = signal<ConfigDeviceDto[]>([]);
+
+  // Создание локации
+  public displayCreateLocationDialog = signal(false);
+  public newLocationName = signal('');
+
+  // Инлайн редактирование локации
+  public editingLocationId = signal<string | null>(null);
+  public editingLocationName = signal('');
 
   // Подсветка при перетаскивании
   public dragHoverLocation = signal<string | null>(null);
@@ -65,5 +77,30 @@ export class LocationsBoardComponent {
 
   onUnassign(deviceId: string) {
     this.unassign.emit(deviceId);
+  }
+
+  confirmCreateLocation() {
+    if (this.newLocationName().trim()) {
+      this.createLocation.emit(this.newLocationName());
+      this.displayCreateLocationDialog.set(false);
+      this.newLocationName.set('');
+    }
+  }
+
+  startEditingLocation(location: ConfigLocationDto) {
+    this.editingLocationId.set(location.id);
+    this.editingLocationName.set(location.name);
+  }
+
+  saveLocationName(locationId: string) {
+    const name = this.editingLocationName();
+    if (name.trim()) {
+      this.renameLocation.emit({ locationId, name });
+    }
+    this.editingLocationId.set(null);
+  }
+
+  cancelEditingLocation() {
+    this.editingLocationId.set(null);
   }
 }

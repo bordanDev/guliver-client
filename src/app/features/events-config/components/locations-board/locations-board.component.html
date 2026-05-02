@@ -1,6 +1,6 @@
 <div class="grid">
   @for (location of locations(); track location.id) {
-    <div class="col-12 lg:col-6 xl:col-4">
+    <div class="col-12 xl:col-6">
       <!-- Зона pDroppable для приема устройств -->
       <div
         pDroppable="devices"
@@ -12,10 +12,21 @@
         class="surface-card border-round shadow-1 p-3 border-2 surface-border h-full flex flex-column transition-colors transition-duration-200"
       >
         <div class="flex justify-content-between align-items-center mb-3">
-          <span class="text-xl font-bold">{{ location.name }}</span>
-          <span class="text-sm font-medium text-white bg-primary border-round px-2 py-1">{{
-            location.devices.length
-          }}</span>
+          @if (editingLocationId() === location.id) {
+              <div class="flex align-items-center gap-2 w-full pr-2">
+                  <input pInputText [ngModel]="editingLocationName()" (ngModelChange)="editingLocationName.set($event)" class="w-full" (keydown.enter)="saveLocationName(location.id)" autofocus />
+                  <p-button icon="pi pi-check" [text]="true" severity="success" (onClick)="saveLocationName(location.id)"></p-button>
+                  <p-button icon="pi pi-times" [text]="true" severity="danger" (onClick)="cancelEditingLocation()"></p-button>
+              </div>
+          } @else {
+              <div class="flex align-items-center gap-2">
+                  <span class="text-xl font-bold">{{ location.name }}</span>
+                  <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" size="small" severity="secondary" (onClick)="startEditingLocation(location)"></p-button>
+              </div>
+              <span class="text-sm font-medium text-white bg-primary border-round px-2 py-1">{{
+                location.devices.length
+              }}</span>
+          }
         </div>
 
         <!-- Контейнер девайсов -->
@@ -70,9 +81,19 @@
       </div>
     </div>
   }
+
+  <!-- Add New Location Card -->
+  <div class="col-12 xl:col-6">
+      <div class="surface-card border-round p-3 border-2 border-dashed surface-border h-full flex flex-column align-items-center justify-content-center cursor-pointer hover:surface-hover transition-colors text-600 hover:text-primary"
+           style="min-height: 200px"
+           (click)="displayCreateLocationDialog.set(true)">
+           <i class="pi pi-plus text-4xl mb-3"></i>
+           <span class="text-xl font-medium">Add New Location</span>
+      </div>
+  </div>
 </div>
 
-<!-- Модальное окно (Dialog) -->
+<!-- Modal Dialog for Assigning Devices -->
 <p-dialog
   header="Select Devices to Assign"
   [visible]="displayDialog()"
@@ -119,4 +140,16 @@
       [disabled]="selectedDevicesForDialog().length === 0"
     ></p-button>
   </ng-template>
+</p-dialog>
+
+<!-- Modal Dialog for Creating Location -->
+<p-dialog header="Create New Location" [visible]="displayCreateLocationDialog()" (visibleChange)="displayCreateLocationDialog.set($event)" [modal]="true" [style]="{width: '25vw', minWidth: '300px'}">
+    <div class="flex flex-column gap-2 pt-2">
+        <label for="locationName" class="font-bold">Location Name</label>
+        <input pInputText id="locationName" [ngModel]="newLocationName()" (ngModelChange)="newLocationName.set($event)" autofocus (keydown.enter)="confirmCreateLocation()" />
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" icon="pi pi-times" [text]="true" severity="secondary" (onClick)="displayCreateLocationDialog.set(false)"></p-button>
+        <p-button label="Create" icon="pi pi-check" (onClick)="confirmCreateLocation()" [disabled]="!newLocationName()"></p-button>
+    </ng-template>
 </p-dialog>

@@ -1,31 +1,105 @@
 <div class="p-4 h-full flex flex-column">
-    <div class="mb-4">
-        <h2 class="m-0 text-900">Event Configuration: {{ facade.eventName() }}</h2>
-        <span class="text-500">Drag and drop devices to locations to provision your hardware matrix.</span>
+  <p-toolbar styleClass="mb-4 bg-white border-none shadow-1 border-round-xl">
+    <div class="p-toolbar-group-start flex align-items-center gap-3">
+      <h2 class="m-0 text-900 mr-3">Events Matrix</h2>
+      <p-select
+        [options]="facade.events()"
+        [ngModel]="facade.selectedEvent()"
+        (onChange)="onEventChange($event)"
+        optionLabel="eventName"
+        placeholder="Select an Event"
+      >
+      </p-select>
+      <p-button
+        icon="pi pi-plus"
+        label="New Event"
+        [outlined]="true"
+        (onClick)="displayCreateEventDialog.set(true)"
+      ></p-button>
     </div>
+  </p-toolbar>
 
-    <!-- Основная сетка. Слева: Available, Справа: Board -->
-    <div class="grid flex-1">
-        <!-- Слева: Свободные устройства. Делаем зону Droppable, чтобы можно было отвязывать устройства -->
-        <div class="col-12 md:col-4 lg:col-3" pDroppable="devices" (onDrop)="onDropToAvailable()">
-            <app-available-devices-list 
-                [devices]="facade.availableDevices()"
-                (dragStart)="onDragStart($event)"
-                (dragEnd)="onDragEnd()">
-            </app-available-devices-list>
-        </div>
-
-        <!-- Справа: Доска локаций -->
-        <div class="col-12 md:col-8 lg:col-9">
-            <app-locations-board 
-                [locations]="facade.locations()"
-                [availableDevices]="facade.availableDevices()"
-                (dragStart)="onDragStart($event)"
-                (dragEnd)="onDragEnd()"
-                (dropped)="onDropToLocation($event)"
-                (assignFromDialog)="onAssignFromDialog($event)"
-                (unassign)="onUnassign($event)">
-            </app-locations-board>
-        </div>
+  @if (!facade.selectedEventId()) {
+    <div
+      class="flex-1 flex align-items-center justify-content-center text-500 surface-card border-round shadow-1"
+    >
+      <div class="text-center">
+        <i class="pi pi-sitemap text-6xl mb-3 text-400"></i>
+        <h3>No Event Selected</h3>
+        <p>Please select or create an event to configure its locations and devices.</p>
+      </div>
     </div>
+  } @else {
+    <!-- Основная сетка. UX separation -->
+    <div class="grid flex-1 m-0">
+      <!-- Слева: Свободные устройства (Серый фон) -->
+      <div
+        class="col-12 md:col-4 lg:col-3 p-0 pr-3"
+        pDroppable="devices"
+        (onDrop)="onDropToAvailable()"
+      >
+        <div class="h-full surface-ground p-3 border-round-xl">
+          <app-available-devices-list
+            [devices]="facade.availableDevices()"
+            (dragStart)="onDragStart($event)"
+            (dragEnd)="onDragEnd()"
+          >
+          </app-available-devices-list>
+        </div>
+      </div>
+
+      <!-- Справа: Доска локаций (Белый фон) -->
+      <div class="col-12 md:col-8 lg:col-9 p-0">
+        <div class="h-full bg-white p-3 border-round-xl shadow-1">
+          <app-locations-board
+            [locations]="facade.locations()"
+            [availableDevices]="facade.availableDevices()"
+            (dragStart)="onDragStart($event)"
+            (dragEnd)="onDragEnd()"
+            (dropped)="onDropToLocation($event)"
+            (assignFromDialog)="onAssignFromDialog($event)"
+            (unassign)="onUnassign($event)"
+            (createLocation)="onCreateLocation($event)"
+            (renameLocation)="onRenameLocation($event)"
+          >
+          </app-locations-board>
+        </div>
+      </div>
+    </div>
+  }
 </div>
+
+<!-- Modal Dialog for Creating Event -->
+<p-dialog
+  header="Create New Event"
+  [visible]="displayCreateEventDialog()"
+  (visibleChange)="displayCreateEventDialog.set($event)"
+  [modal]="true"
+  [style]="{ width: '25vw', minWidth: '300px' }"
+>
+  <div class="flex flex-column gap-2 pt-2">
+    <label for="eventName" class="font-bold">Event Name</label>
+    <input
+      pInputText
+      id="eventName"
+      [ngModel]="newEventName()"
+      (ngModelChange)="newEventName.set($event)"
+      autofocus
+    />
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      [text]="true"
+      severity="secondary"
+      (onClick)="displayCreateEventDialog.set(false)"
+    ></p-button>
+    <p-button
+      label="Create"
+      icon="pi pi-check"
+      (onClick)="createNewEvent()"
+      [disabled]="!newEventName()"
+    ></p-button>
+  </ng-template>
+</p-dialog>

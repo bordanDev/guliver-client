@@ -1,113 +1,169 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { ConfigDeviceDto, EventProvisioningStateDto } from '@guliver/shared-contracts';
+import { ConfigDeviceDto, SystemProvisioningStateDto } from '@guliver/shared-contracts';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventsConfigFacade {
-  // Основной стейт - Single Source of Truth
-  private readonly _state = signal<EventProvisioningStateDto>({
-    eventId: 'evt-1',
-    eventName: 'Web Summit 2026',
-    availableDevices: [
-      {
-        id: 'd1',
-        macAddress: 'AA:BB:CC:DD:EE:11',
-        deviceName: 'ESP32-Entrance',
-        status: 'UNASSIGNED',
-      },
-      {
-        id: 'd2',
-        macAddress: 'AA:BB:CC:DD:EE:22',
-        deviceName: 'ESP32-Backdoor',
-        status: 'UNASSIGNED',
-      },
-      {
-        id: 'd3',
-        macAddress: '11:22:33:44:55:66',
-        deviceName: 'ToF-Sensor-VIP',
-        status: 'UNASSIGNED',
-      },
+  private readonly _state = signal<SystemProvisioningStateDto>({
+    globalAvailableDevices: [
+      { id: 'd1', macAddress: 'AA:BB:CC:DD:EE:11', deviceName: 'ESP32-Entrance', status: 'UNASSIGNED' },
+      { id: 'd2', macAddress: 'AA:BB:CC:DD:EE:22', deviceName: 'ESP32-Backdoor', status: 'UNASSIGNED' },
+      { id: 'd3', macAddress: '11:22:33:44:55:66', deviceName: 'ToF-Sensor-VIP', status: 'UNASSIGNED' },
+      { id: 'd4', macAddress: 'FF:FF:FF:FF:FF:FF', deviceName: 'ToF-Sensor-Hall', status: 'UNASSIGNED' }
     ],
-    locations: [
-      { id: 'loc-1', name: 'Main Entrance', devices: [] },
-      { id: 'loc-2', name: 'VIP Lounge', devices: [] },
-    ],
+    events: [
+      {
+        eventId: 'evt-1',
+        eventName: 'Web Summit 2026',
+        locations: [
+          { id: 'loc-1', name: 'Main Entrance', devices: [] },
+          { id: 'loc-2', name: 'VIP Lounge', devices: [] },
+        ],
+      },
+      {
+        eventId: 'evt-2',
+        eventName: 'Tech Conference',
+        locations: [],
+      }
+    ]
   });
 
-  // Публичные Computed Сигналы
-  public readonly eventName = computed(() => this._state().eventName);
-  public readonly availableDevices = computed(() => this._state().availableDevices);
-  public readonly locations = computed(() => this._state().locations);
+  public readonly selectedEventId = signal<string | null>('evt-1');
 
-  /**
-   * Перенос устройства (или нескольких) из Available в конкретную Location
-   */
+  public readonly availableDevices = computed(() => this._state().globalAvailableDevices);
+  public readonly events = computed(() => this._state().events);
+  
+  public readonly selectedEvent = computed(() => {
+    const id = this.selectedEventId();
+    return this.events().find(e => e.eventId === id) || null;
+  });
+
+  public readonly locations = computed(() => {
+    const evt = this.selectedEvent();
+    return evt ? evt.locations : [];
+  });
+
+  public selectEvent(eventId: string): void {
+    this.selectedEventId.set(eventId);
+  }
+
+  public createEvent(eventName: string): void {
+    if (!eventName.trim()) return;
+    const newEvent = {
+      eventId: `evt-${Date.now()}`,
+      eventName,
+      locations: []
+    };
+    this._state.update(state => ({
+      ...state,
+      events: [...state.events, newEvent]
+    }));
+    this.selectedEventId.set(newEvent.eventId);
+  }
+
   public assignDeviceToLocation(devices: ConfigDeviceDto[], locationId: string): void {
+    const eventId = this.selectedEventId();
+    if (!eventId) return;
+
     this._state.update((state) => {
-      const idsToAssign = devices.map((d) => d.id);
+      const idsToAssign = devices.map(d => d.id);
+      
+      const newAvailable = state.globalAvailableDevices.filter((d) => !idsToAssign.includes(d.id));
 
-      // 1. Убираем из доступных
-      const newAvailable = state.availableDevices.filter((d) => !idsToAssign.includes(d.id));
+      const newEvents = state.events.map(evt => {
+        if (evt.eventId !== eventId) return evt;
 
-      // 2. Ищем откуда могли забрать (если перетащили из другой локации)
-      const cleanLocations = state.locations.map((loc) => ({
-        ...loc,
-        devices: loc.devices.filter((d) => !idsToAssign.includes(d.id)),
-      }));
+        const cleanLocations = evt.locations.map((loc) => ({
+          ...loc,
+          devices: loc.devices.filter((d) => !idsToAssign.includes(d.id))
+        }));
 
-      // 3. Добавляем в целевую локацию
-      const updatedLocations = cleanLocations.map((loc) => {
-        if (loc.id === locationId) {
-          const newOnlineDevices = devices.map((d) => ({ ...d, status: 'ONLINE' as const }));
-          return { ...loc, devices: [...loc.devices, ...newOnlineDevices] };
-        }
-        return loc;
+        const updatedLocations = cleanLocations.map((loc) => {
+          if (loc.id === locationId) {
+             const newOnlineDevices = devices.map(d => ({ ...d, status: 'ONLINE' as const }));
+             return { ...loc, devices: [...loc.devices, ...newOnlineDevices] };
+          }
+          return loc;
+        });
+
+        return { ...evt, locations: updatedLocations };
       });
 
       return {
         ...state,
-        availableDevices: newAvailable,
-        locations: updatedLocations,
+        globalAvailableDevices: newAvailable,
+        events: newEvents,
       };
     });
   }
 
-  /**
-   * Возврат устройства из Location обратно в Available
-   */
   public unassignDevice(deviceId: string): void {
+    const eventId = this.selectedEventId();
+    if (!eventId) return;
+
     this._state.update((state) => {
       let foundDevice: ConfigDeviceDto | undefined;
 
-      const updatedLocations = state.locations.map((loc) => {
-        const dev = loc.devices.find((d) => d.id === deviceId);
-        if (dev) {
-          foundDevice = { ...dev, status: 'UNASSIGNED' };
-          return { ...loc, devices: loc.devices.filter((d) => d.id !== deviceId) };
-        }
-        return loc;
+      const newEvents = state.events.map(evt => {
+        if (evt.eventId !== eventId) return evt;
+
+        const updatedLocations = evt.locations.map((loc) => {
+          const dev = loc.devices.find((d) => d.id === deviceId);
+          if (dev) {
+            foundDevice = { ...dev, status: 'UNASSIGNED' };
+            return { ...loc, devices: loc.devices.filter((d) => d.id !== deviceId) };
+          }
+          return loc;
+        });
+
+        return { ...evt, locations: updatedLocations };
       });
 
       if (foundDevice) {
         return {
           ...state,
-          availableDevices: [...state.availableDevices, foundDevice],
-          locations: updatedLocations,
+          globalAvailableDevices: [...state.globalAvailableDevices, foundDevice],
+          events: newEvents,
         };
       }
       return state;
     });
   }
 
-  /**
-   * Создать новую локацию
-   */
   public createLocation(name: string): void {
-    if (!name.trim()) return;
-    this._state.update((state) => ({
-      ...state,
-      locations: [...state.locations, { id: `loc-${Date.now()}`, name, devices: [] }],
-    }));
+    const eventId = this.selectedEventId();
+    if (!name.trim() || !eventId) return;
+
+    this._state.update((state) => {
+       const newEvents = state.events.map(evt => {
+           if (evt.eventId === eventId) {
+               return {
+                   ...evt,
+                   locations: [...evt.locations, { id: `loc-${Date.now()}`, name, devices: [] }]
+               };
+           }
+           return evt;
+       });
+       return { ...state, events: newEvents };
+    });
+  }
+
+  public renameLocation(locationId: string, newName: string): void {
+    const eventId = this.selectedEventId();
+    if (!newName.trim() || !eventId) return;
+
+    this._state.update((state) => {
+       const newEvents = state.events.map(evt => {
+           if (evt.eventId === eventId) {
+               const updatedLocations = evt.locations.map(loc => 
+                   loc.id === locationId ? { ...loc, name: newName } : loc
+               );
+               return { ...evt, locations: updatedLocations };
+           }
+           return evt;
+       });
+       return { ...state, events: newEvents };
+    });
   }
 }
